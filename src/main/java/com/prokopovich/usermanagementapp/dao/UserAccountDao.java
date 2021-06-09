@@ -7,6 +7,13 @@ import java.util.Collection;
 
 public interface UserAccountDao {
 
-    Collection<UserAccount> findAllByUsername(String username) throws DaoException;
+    UserAccount create(UserAccount newUser) throws DaoException;
 
+    boolean update(UserAccount user) throws DaoException;
+
+    UserAccount findOne(int id) throws DaoException;
+
+    Collection<UserAccount> findAll() throws DaoException;
+
+    Collection<UserAccount> findAllByUsername(String username) throws DaoException;
 }
