@@ -18,4 +18,6 @@ public interface UserAccountDao {
     Collection<UserAccount> findAllByUsername(String username) throws DaoException;
 
     Collection<UserAccount> findAllByRole(String role) throws DaoException;
+
+    Collection<UserAccount> findAllByStatus(String status) throws DaoException;
 }

@@ -91,6 +91,12 @@ public class UserAccountDaoImpl implements UserAccountDao {
         return findByOneParameter("role", role);
     }
 
+    @Override
+    public Collection<UserAccount> findAllByStatus(String status) throws DaoException {
+        LOGGER.trace("findAllByRole method is executed");
+        return findByOneParameter("status", status);
+    }
+
     private Collection<UserAccount> findByOneParameter(String field, String parameter) throws DaoException {
         EntityManager entityManager = entityManagerFactory.createEntityManager();
         try {

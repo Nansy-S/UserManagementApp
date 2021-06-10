@@ -6,7 +6,7 @@ import java.util.List;
 
 public interface UserAccountService {
 
-    UserAccount addNewUser(UserAccount user);
+    UserAccount addNewUser(UserAccount newUser);
 
     boolean updateUser(UserAccount user);
 
@@ -14,5 +14,11 @@ public interface UserAccountService {
 
     List<UserAccount> getAllUser();
 
-    List<UserAccount> changeUserStatus(String status);
+    String changeUserStatus(int id, String status);
+
+    List<UserAccount> findByUsername(String username);
+
+    List<UserAccount> findByRole(String role);
+
+    List<UserAccount> findByStatus(String status);
 }
