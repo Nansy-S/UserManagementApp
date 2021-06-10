@@ -30,7 +30,7 @@ public class UserAccount {
     public UserAccount() { }
 
     public UserAccount(int id, String username, String password, String firstName, String lastName,
-                       String role, String status, LocalDateTime createdAt) {
+                       String role, String status) {
         this.id = id;
         this.username = username;
         this.password = password;
@@ -38,7 +38,6 @@ public class UserAccount {
         this.lastName = lastName;
         this.role = role;
         this.status = status;
-        this.createdAt = createdAt;
     }
 
     public int getId() {
