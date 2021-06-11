@@ -1,0 +1,25 @@
+.vertical-menu {
+    position: relative;
+    top: 260px;
+    left: -40px;
+    width: 350px;
+    border-radius: 15px;
+    background: rgb(229,179,91);
+    box-shadow: rgb(49,11,2) 0 2px 5px;
+}
+
+.vertical-menu a {
+    background-color: rgb(229,179,91);
+    color: rgb(157,70,17);
+    text-decoration: none;
+    font-weight: 800;
+    font-size: 20px;
+    font-stretch: semi-condensed;
+    font-family: Century Gothic;
+    border-radius: 15px;
+    padding-top: 25px;
+    padding-bottom: 25px;
+    padding-left: 10px;
+    position: relative;
+    top: -30px;
+}

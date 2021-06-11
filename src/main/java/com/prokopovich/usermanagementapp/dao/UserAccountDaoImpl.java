@@ -9,6 +9,7 @@ import org.springframework.stereotype.Repository;
 
 import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
+import javax.persistence.Query;
 import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaQuery;
 import javax.persistence.criteria.Predicate;
@@ -19,6 +20,9 @@ import java.util.Collection;
 public class UserAccountDaoImpl implements UserAccountDao {
 
     private static final Logger LOGGER = LogManager.getLogger(UserAccountDaoImpl.class);
+    private static final String SQL_SELECT_FILTER = "SELECT e FROM UserAccount e " +
+            "WHERE e.username LIKE :username AND e.role LIKE :role AND e.status LIKE :status";
+
     private final EntityManagerFactory entityManagerFactory;
 
     @Autowired
@@ -82,30 +86,31 @@ public class UserAccountDaoImpl implements UserAccountDao {
     @Override
     public Collection<UserAccount> findAllByUsername(String username) throws DaoException {
         LOGGER.trace("findAllByUsername method is executed");
-        return findByOneParameter("username", username);
-    }
-
-    @Override
-    public Collection<UserAccount> findAllByRole(String role) throws DaoException {
-        LOGGER.trace("findAllByRole method is executed");
-        return findByOneParameter("role", role);
-    }
-
-    @Override
-    public Collection<UserAccount> findAllByStatus(String status) throws DaoException {
-        LOGGER.trace("findAllByRole method is executed");
-        return findByOneParameter("status", status);
-    }
-
-    private Collection<UserAccount> findByOneParameter(String field, String parameter) throws DaoException {
         EntityManager entityManager = entityManagerFactory.createEntityManager();
         try {
             CriteriaBuilder criteriaBuilder = entityManager.getCriteriaBuilder();
             CriteriaQuery<UserAccount> criteriaQuery = criteriaBuilder.createQuery(UserAccount.class);
             Root<UserAccount> tRoot = criteriaQuery.from(UserAccount.class);
-            Predicate predicate = criteriaBuilder.equal(tRoot.get(field), parameter);
+            Predicate predicate = criteriaBuilder.equal(tRoot.get("username"), username);
             criteriaQuery.where(predicate);
             return entityManager.createQuery(criteriaQuery).getResultList();
+        } finally {
+            entityManager.close();
+        }
+    }
+
+    @Override
+    public Collection<UserAccount> findByUsernameAndRoleAndStatus(String username, String role,
+                                                                  String status) throws DaoException {
+        LOGGER.info("findByUsernameAndRoleAndStatus method is executed - username = " + username +
+                ", role = " + role + ", status = " + status);
+        EntityManager entityManager = entityManagerFactory.createEntityManager();
+        try {
+            Query query = entityManager.createQuery(SQL_SELECT_FILTER);
+            query.setParameter("username", "%"+username+"%");
+            query.setParameter("role", "%"+role+"%");
+            query.setParameter("status", "%"+status+"%");
+            return query.getResultList();
         } finally {
             entityManager.close();
         }

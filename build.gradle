@@ -18,6 +18,7 @@ dependencies {
     implementation 'org.springframework.boot:spring-boot-starter-security'
     implementation 'org.springframework.boot:spring-boot-starter-thymeleaf'
     implementation 'org.springframework.boot:spring-boot-starter-web'
+    implementation 'org.springframework.boot:spring-boot-starter-validation:2.3.1.RELEASE'
     implementation 'org.thymeleaf.extras:thymeleaf-extras-springsecurity5'
     runtimeOnly 'org.postgresql:postgresql'
     providedRuntime 'org.springframework.boot:spring-boot-starter-tomcat'
@@ -26,6 +27,18 @@ dependencies {
     implementation group: 'org.apache.logging.log4j', name: 'log4j-api', version: '2.13.3'
     implementation group: 'org.apache.logging.log4j', name: 'log4j-core', version: '2.13.3'
     implementation 'javax.validation:validation-api:2.0.1.Final'
+}
+
+task createProperties {
+    doLast {
+        def version = project.version.toString()
+        def file = new File("$buildDir/resources/main/version.txt")
+        file.write(version)
+    }
+}
+
+war {
+    dependsOn createProperties
 }
 
 test {

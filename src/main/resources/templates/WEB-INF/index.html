@@ -1,0 +1,14 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8" />
+    <title>Home</title>
+    <link rel="stylesheet" type="text/css" th:href="@{/css/style.css}"/>
+    <link rel="stylesheet" type="text/css" th:href="@{/css/menu-style.css}"/>
+</head>
+<body>
+    <div th:insert="~{fragments/main-fragment::menu}"></div>
+    <h1> Welcome<span></span>!</h1>
+    <div th:insert="~{fragments/main-fragment::footer}"></div>
+</body>
+</html>

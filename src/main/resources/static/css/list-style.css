@@ -1,0 +1,45 @@
+
+table {
+    position:absolute;
+    margin-top: 180px;
+    margin-left: 10%;
+    font-family: Century Gothic;
+    font-size: 15px;
+    text-align: center;
+    width: 80%;
+}
+
+table th {
+    background-color: rgb(80 80 80);
+    padding: 15px 25px;
+    color:white;
+    font-size: 16px;
+}
+
+table td {
+    padding: 5px 10px;
+    font-weight: 600;
+}
+
+table a {
+    text-decoration: none;
+    color:rgb(40 40 40);
+}
+
+table a:hover{
+    text-decoration: underline;
+}
+
+table a:visited{
+    color:rgb(40 40 40);
+}
+
+#filter {
+    position:absolute;
+    margin-top: 80px;
+    margin-left: 10%;
+}
+
+#filter p {
+    display: inline-block;
+}

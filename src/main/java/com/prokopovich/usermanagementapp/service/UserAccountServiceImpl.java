@@ -62,12 +62,10 @@ public class UserAccountServiceImpl implements UserAccountService {
     }
 
     @Override
-    public List<UserAccount> findByRole(String role) {
-        return (List<UserAccount>) userDao.findAllByRole(role);
-    }
-
-    @Override
-    public List<UserAccount> findByStatus(String status) {
-        return (List<UserAccount>) userDao.findAllByStatus(status);
+    public List<UserAccount> filterUser(String username, String role, String status) {
+        if(username == null) username = "";
+        if(role == null) role = "";
+        if(status == null) status = "";
+        return (List<UserAccount>) userDao.findByUsernameAndRoleAndStatus(username, role, status);
     }
 }

@@ -1,11 +1,15 @@
 package com.prokopovich.usermanagementapp.controller;
 
+import com.prokopovich.usermanagementapp.dao.UserAccountDao;
 import com.prokopovich.usermanagementapp.dto.UserAccountDto;
 import com.prokopovich.usermanagementapp.entity.UserAccount;
+import com.prokopovich.usermanagementapp.enumeration.UserRole;
+import com.prokopovich.usermanagementapp.enumeration.UserStatus;
 import com.prokopovich.usermanagementapp.service.UserAccountService;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Sort;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.ui.Model;
 import org.springframework.validation.Errors;
@@ -30,14 +34,41 @@ public class UserAccountController {
 
     @GetMapping(value = {""})
     public ModelAndView userList(Model model) {
+        UserAccountDto filterFieldUser = new UserAccountDto();
+
         List<UserAccount> userList = userService.getAllUser();
-        LOGGER.trace("user List" + userList);
+        LOGGER.info("user List" + userList);
         ModelAndView modelAndView = new ModelAndView();
-        modelAndView.setViewName("user");
+        modelAndView.setViewName("userList");
+        model.addAttribute("filterFieldUser", filterFieldUser);
         model.addAttribute("userList", userList);
-        //model.addAttribute("currentUser", MainController.getCurrentUser(userService));
-        LOGGER.trace("/user was called");
+        setModelForListUser(model);
+        LOGGER.info("/user was called");
         return modelAndView;
+    }
+
+    @PostMapping(value = {""})
+    public ModelAndView filterUserList(Model model,
+                                       @ModelAttribute("filterFieldUser") UserAccountDto filterFieldUser) {
+        List<UserAccount> userList = userService.filterUser(
+                filterFieldUser.getUsername(),
+                filterFieldUser.getRole(),
+                filterFieldUser.getStatus());
+        ModelAndView modelAndView = new ModelAndView();
+        modelAndView.setViewName("userList");
+        model.addAttribute("userList", userList);
+        model.addAttribute("filterFieldUser", filterFieldUser);
+        setModelForListUser(model);
+        LOGGER.info("/user was called");
+        return modelAndView;
+    }
+
+    private void setModelForListUser(Model model) {
+        List<String> roleList = UserRole.getAllTitle();
+        List<String> statusList = UserStatus.getAllTitle();
+        model.addAttribute("roleList", roleList);
+        model.addAttribute("statusList", statusList);
+        //model.addAttribute("currentUser", MainController.getCurrentUser(userService));
     }
 
     @GetMapping(value = {"/{id}"})
@@ -47,30 +78,32 @@ public class UserAccountController {
         modelAndView.setViewName("userDetail");
         modelAndView.addObject("userAccount", userAccount);
         //modelAndView.addObject("currentUser", MainController.currentUser);
-        LOGGER.trace("userDetail was called");
+        LOGGER.info("userDetail was called");
         return modelAndView;
     }
 
     @GetMapping(value = "/new")
     public  ModelAndView addUserPage(Model model) {
-        ModelAndView modelAndView = new ModelAndView("new");
+        ModelAndView modelAndView = new ModelAndView("addUser");
         UserAccountDto userForm = new UserAccountDto();
         model.addAttribute("userForm", userForm);
-        LOGGER.trace("/user/new - GET was called");
+        model.addAttribute("roleList", UserRole.getAllTitle());
+        model.addAttribute("statusList", UserStatus.getAllTitle());
+        LOGGER.info("addUser - GET was called");
         return modelAndView;
     }
 
     @PostMapping(value = "/new")
     public ModelAndView saveUser(Model model,
                                  @Valid @ModelAttribute("userForm") UserAccountDto userDto, Errors errors) {
+        LOGGER.info("addUser - POST was called");
         ModelAndView modelAndView = new ModelAndView();
-        LOGGER.trace("/user/new - POST was called" + userDto);
         if (errors.hasErrors()) {
-            modelAndView.setViewName("new");
+            modelAndView.setViewName("addUser");
            // model.addAttribute("currentUser", MainController.currentUser);
         }
         else {
-            modelAndView.setViewName("user");
+            modelAndView.setViewName("userList");
             UserAccount newUser = new UserAccount(
                     0,
                     userDto.getUsername(),
@@ -94,13 +127,13 @@ public class UserAccountController {
         modelAndView.setViewName("edit");
         modelAndView.addObject("user", user);
         //modelAndView.addObject("currentUser", MainController.currentUser);
-        LOGGER.trace("/edit - GET was called");
+        LOGGER.info("/edit - GET was called");
         return modelAndView;
     }
 
     @PostMapping(value = "/{id}/edit")
     public ModelAndView editUser(@Valid @ModelAttribute("user") UserAccountDto userDto, Errors errors) {
-        LOGGER.trace("/edit - POST was called");
+        LOGGER.info("/edit - POST was called");
         ModelAndView modelAndView = new ModelAndView();
         if (errors.hasErrors()) {
             modelAndView.setViewName("edit");
@@ -121,7 +154,7 @@ public class UserAccountController {
     @PostMapping(value = "/{id}")
     public ModelAndView changeStatus(@PathVariable("id") int id,
                                      @ModelAttribute("newStatus") String newStatus) {
-        LOGGER.trace("/changeStatus - POST was called");
+        LOGGER.info("/changeStatus - POST was called");
         ModelAndView modelAndView = new ModelAndView();
         String changeResult = userService.changeUserStatus(id, newStatus);
         modelAndView.addObject("changeResult", changeResult);

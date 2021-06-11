@@ -1,0 +1,17 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8" />
+    <title>User detail</title>
+    <link rel="stylesheet" type="text/css" th:href="@{/css/style.css}"/>
+</head>
+<body>
+    <div class="infoUser">
+        <p th:utext="'Full name: <span>' + ${userAccount.firstName} + ' ' + ${userAccount.lastName} + '</span>'">...</p>
+        <p th:utext="'Username: <span>' + ${userAccount.username} + '</span>'">...</p>
+        <p th:utext="'Role: <span>' + ${userAccount.role} + '</span>'">...</p>
+        <p th:utext="'Status: <span>' + ${userAccount.status} + '</span>'">...</p>
+        <p th:utext="'Created at: <span>' + ${userAccount.createdAt} + '</span>'">...</p>
+    </div>
+</body>
+</html>

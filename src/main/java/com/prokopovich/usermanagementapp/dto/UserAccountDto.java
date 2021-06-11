@@ -1,26 +1,36 @@
 package com.prokopovich.usermanagementapp.dto;
 
+import com.prokopovich.usermanagementapp.validator.UniqueUsername;
+
+import javax.validation.Valid;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.Pattern;
+import javax.validation.constraints.Size;
 
 public class UserAccountDto {
 
     @NotBlank(message="The field is not filled.")
-    @Pattern(regexp="[a-zA-Z]{3,}", message="username должно содержать только латинские буквы")
+    @UniqueUsername
+    @Size(min=3, max=16, message="Username must be at least 3 and no more than 16 characters.")
+    @Pattern(regexp="^[a-zA-Z]+$", message="Username must contain only Latin letters")
     private String username;
 
     @NotBlank(message="The field is not filled.")
-    @Pattern(regexp="[a-zA-Z0-9]{3,}", message="password должно содержать только латинские буквы и цифры")
-    @Pattern(regexp="[a-zA-Z]", message="password должен содержать хоть 1 букву")
-    @Pattern(regexp="[0-9]", message="password должен содержать хоть 1 цифру")
+
+    @Size(min=3, max=16, message="Password must be at least 3 and no more than 16 characters.")
+    @Pattern(regexp="^[a-zA-Z0-9]+$", message="Password must contain only Latin letters or numbers")
+    @Pattern(regexp="[a-zA-Z]", message="Password must contain at least one character")
+    @Pattern(regexp="[0-9]", message="Password must contain at least one numbers")
     private String password;
 
     @NotBlank(message="The field is not filled.")
-    @Pattern(regexp="[a-zA-Z]", message="firstName должно содержать только латинские буквы")
+    @Size(min=1, max=16, message="First Name must be at least 3 and no more than 16 characters.")
+    @Pattern(regexp="^[a-zA-Z]+$", message="First Name must contain only Latin letters")
     private String firstName;
 
     @NotBlank(message="The field is not filled.")
-    @Pattern(regexp="[a-zA-Z]", message="lastName должно содержать только латинские буквы")
+    @Size(min=1, max=16, message="Last Name must be at least 3 and no more than 16 characters.")
+    @Pattern(regexp="^[a-zA-Z]+$", message="Last Name must contain only Latin letters")
     private String lastName;
 
     private String role;

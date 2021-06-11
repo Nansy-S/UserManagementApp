@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8" />
+    <link rel="stylesheet" type="text/css" th:href="@{/css/style.css}"/>
+    <link rel="stylesheet" type="text/css" th:href="@{/css/menu-style.css}"/>
+    <link rel="stylesheet" type="text/css" th:href="@{/css/list-style.css}"/>
+    <title>List User</title>
+</head>
+<body>
+    <div th:insert="~{fragments/main-fragment::menu}"></div>
+    <div class="userList">
+        <div id="filter">
+            <form th:action="@{/user}" method="POST" th:object="${filterFieldUser}" name="userList" autocomplete="off">
+                <p>Username:
+                    <input type="text" th:field="*{username}"/>
+                </p>
+                <p>Role:
+                    <select th:field="*{role}">
+                        <option text="" value="" label="не выбрано"></option>
+                        <option th:each ="role : ${roleList}" th:value="${role}" th:text="${role}"></option>
+                    </select>
+                </p>
+                <p>Status:
+                    <select th:field="*{status}">
+                        <option text="" value="" label="no select"></option>
+                        <option th:each ="status : ${statusList}" th:value="${status}" th:text="${status}"></option>
+                    </select>
+                </p>
+                <input type="submit" value="FILTER" class="button buttonAdd buttFilter"/>
+                <input type="submit" value="CLEAN" class="button buttCl" />
+            </form>
+        </div>
+        <table border="1">
+            <thead>
+                <tr>
+                    <th>Full Name</th>
+                    <th>Username</th>
+                    <th>Role</th>
+                    <th>Status</th>
+                    <th>Created at</th>
+                    <th>Action</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr th:each ="user : ${userList}">
+                    <td th:utext="${user.firstName} + ' ' + ${user.lastName}">...</td>
+                    <td th:utext="${user.username}">...</td>
+                    <td th:utext="${user.role}">...</td>
+                    <td th:utext="${user.status}">...</td>
+                    <td th:utext="${user.createdAt}">...</td>
+                    <td>
+                        <a th:href="@{'/user/'+${user.id}}">detail</a>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+    <div th:insert="~{fragments/main-fragment::footer}"></div>
+</body>
+</html>

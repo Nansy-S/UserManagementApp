@@ -18,7 +18,5 @@ public interface UserAccountService {
 
     List<UserAccount> findByUsername(String username);
 
-    List<UserAccount> findByRole(String role);
-
-    List<UserAccount> findByStatus(String status);
+    List<UserAccount> filterUser(String username, String role, String status);
 }
