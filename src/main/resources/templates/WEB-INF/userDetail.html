@@ -6,12 +6,30 @@
     <link rel="stylesheet" type="text/css" th:href="@{/css/style.css}"/>
 </head>
 <body>
-    <div class="infoUser">
-        <p th:utext="'Full name: <span>' + ${userAccount.firstName} + ' ' + ${userAccount.lastName} + '</span>'">...</p>
-        <p th:utext="'Username: <span>' + ${userAccount.username} + '</span>'">...</p>
-        <p th:utext="'Role: <span>' + ${userAccount.role} + '</span>'">...</p>
-        <p th:utext="'Status: <span>' + ${userAccount.status} + '</span>'">...</p>
-        <p th:utext="'Created at: <span>' + ${userAccount.createdAt} + '</span>'">...</p>
+    <div th:insert="~{fragments/main-fragment::menu}"></div>
+    <div class="content">
+        <div id="infoUser">
+            <h2>User details</h2>
+            <p th:utext="'Full name: <b>' + ${userAccount.firstName} + ' ' + ${userAccount.lastName} + '</b>'">...</p>
+            <p th:utext="'Username: <b>' + ${userAccount.username} + '</b>'">...</p>
+            <p th:utext="'Role: <b>' + ${userAccount.role} + '</b>'">...</p>
+            <p th:utext="'Status: <b>' + ${userAccount.status} + '</b>'">...</p>
+            <p th:utext="'Created at: <b>' + ${#temporals.format(userAccount.createdAt, 'dd-MM-yyyy HH:mm')} + '</b>'">...</p>
+        </div>
+        <div class="buttonUser">
+            <a th:href="@{'/user/' + ${userAccount.id} + '/edit/'}" class="button editBtn">EDIT USER</a><br>
+            <form th:if="${userAccount.status == 'ACTIVE'}"
+                  th:action="@{'/user/' + ${userAccount.id}}" method="POST">
+                <input type="text" hidden name="changedUser" th:value="INACTIVE" class="usernameInput"/>
+                <input type="submit" value="BLOCK USER" class="button blockBtn"/>
+            </form>
+            <form th:if="${userAccount.status == 'INACTIVE'}"
+                  th:action="@{'/user/' + ${userAccount.id}}" method="POST">
+                <input type="text" hidden th:field="*{changedUser}" th:value="ACTIVE" class="usernameInput"/>
+                <input type="submit" value="UNBLOCK USER" class="button blockBtn"/>
+            </form>
+        </div>
     </div>
+    <div th:insert="~{fragments/main-fragment::footer}"></div>
 </body>
 </html>

@@ -3,50 +3,66 @@
 <head>
     <meta charset="UTF-8" />
     <title>New User</title>
+    <script src='http://code.jquery.com/jquery-latest.js'></script>
     <link rel="stylesheet" type="text/css" th:href="@{/css/style.css}"/>
+    <link rel="stylesheet" type="text/css" th:href="@{/css/menu-style.css}"/>
 </head>
 <body>
-
+    <div th:insert="~{fragments/main-fragment::menu}"></div>
+    <div class="content">
     <div id="addUser">
-        <h1 class="addInf">Введите информацию:</h1>
+        <h2>Enter information</h2>
         <form th:action="@{/user/new}" th:object="${userForm}" method="POST" name="UserForm" autocomplete="off">
-            <p>Username:<input type="text" th:field="*{username}"/> </p>
+            <p>Username:<input type="text" th:field="*{username}" class="usernameField"/> </p>
             <span class="validationError"
                   th:if="${#fields.hasErrors('username')}"
                   th:errors="*{username}"> </span>
 
-            <p>Password:<input type="text" th:field="*{password}"/></p>
+            <p>Password:<input type="password" th:field="*{password}" class="passwordField"/></p>
             <span class="validationError"
                   th:if="${#fields.hasErrors('password')}"
                   th:errors="*{password}"> </span>
 
-            <p>First Name:<input type="text" th:field="*{firstName}"/></p>
+            <p>First Name:<input type="text" th:field="*{firstName}" class="firstNameField"/></p>
             <span class="validationError"
                   th:if="${#fields.hasErrors('firstName')}"
                   th:errors="*{firstName}"> </span>
 
-            <p>Last Name:<input type="text" th:field="*{lastName}"/></p>
+            <p>Last Name:<input type="text" th:field="*{lastName}" class="lastNameField"/></p>
             <span class="validationError"
                   th:if="${#fields.hasErrors('lastName')}"
                   th:errors="*{lastName}"> </span>
 
             <p>Role:
-                <select th:field="*{role}">
-                    <option text="" value="" label="не выбрано"></option>
+                <select th:field="*{role}" class="roleField">
+                    <option text="" value="" label="---"></option>
                     <option th:each ="role : ${roleList}" th:value="${role}" th:text="${role}"></option>
                 </select>
             </p>
 
             <p>Status:
-                <select th:field="*{status}">
-                    <option text="" value="" label="не выбрано"></option>
+                <select th:field="*{status}" class="statusField">
+                    <option text="" value="" label="---"></option>
                     <option th:each ="status : ${statusList}" th:value="${status}" th:text="${status}"></option>
                 </select>
             </p>
-
-            <input type="submit" value="ADD" class="button buttonAdd" id="addUserApp"/>
+            <div class="formButton">
+                <input type="submit" value="ADD" class="button"/>
+                <input type="button" value="CLEAN" class="button buttonClean" />
+            </div>
         </form>
     </div>
-
+    </div>
+    <div th:insert="~{fragments/main-fragment::footer}"></div>
+    <script>
+        $('.buttonClean').on('click', function(){
+            $('.usernameField').val("");
+            $('.passwordField').val("");
+            $('.firstNameField').val("");
+            $('.lastNameField').val("");
+            $('.roleField').val("---");
+            $('.statusField').val("---");
+        });
+    </script>
 </body>
 </html>

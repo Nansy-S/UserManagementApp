@@ -2,6 +2,8 @@ package com.prokopovich.usermanagementapp.service;
 
 import com.prokopovich.usermanagementapp.dao.UserAccountDao;
 import com.prokopovich.usermanagementapp.entity.UserAccount;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -11,6 +13,8 @@ import java.util.List;
 
 @Service
 public class UserAccountServiceImpl implements UserAccountService {
+
+    private static final Logger LOGGER = LogManager.getLogger(UserAccountServiceImpl.class);
 
     private final UserAccountDao userDao;
 
@@ -31,6 +35,10 @@ public class UserAccountServiceImpl implements UserAccountService {
 
     @Override
     public boolean updateUser(UserAccount user) {
+        UserAccount prevInfoUser = getByUserId(user.getId());
+        user.setPassword(prevInfoUser.getPassword());
+        user.setStatus(prevInfoUser.getStatus());
+        user.setCreatedAt(prevInfoUser.getCreatedAt());
         return userDao.update(user);
     }
 
@@ -45,15 +53,16 @@ public class UserAccountServiceImpl implements UserAccountService {
     }
 
     @Override
-    public String changeUserStatus(int id, String status) {
+    public void changeUserStatus(int id, String status) {
         String result = "";
         UserAccount user = userDao.findOne(id);
         if(user.getStatus().equals(status)) {
             result = "This user is already " + status + ".";
         } else {
+            user.setStatus(status);
             result = userDao.update(user) ? "User status changed." : "Server error.";
         }
-        return result;
+        LOGGER.info(result);
     }
 
     @Override

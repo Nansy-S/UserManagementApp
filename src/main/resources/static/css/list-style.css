@@ -1,8 +1,9 @@
 
 table {
-    position:absolute;
-    margin-top: 180px;
+    position: relative;
+    margin-top: 8px;
     margin-left: 10%;
+    margin-bottom: 100px;
     font-family: Century Gothic;
     font-size: 15px;
     text-align: center;
@@ -35,11 +36,16 @@ table a:visited{
 }
 
 #filter {
-    position:absolute;
-    margin-top: 80px;
+    position: relative;
+    margin-top: 70px;
     margin-left: 10%;
+    width: 80%;
+    border:3px double rgb(120 120 120);
 }
 
 #filter p {
     display: inline-block;
+    font-family: Century Gothic;
+    font-size: 15px;
+    margin-left:20px;
 }

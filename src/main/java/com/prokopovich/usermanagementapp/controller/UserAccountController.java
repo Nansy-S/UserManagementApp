@@ -64,10 +64,8 @@ public class UserAccountController {
     }
 
     private void setModelForListUser(Model model) {
-        List<String> roleList = UserRole.getAllTitle();
-        List<String> statusList = UserStatus.getAllTitle();
-        model.addAttribute("roleList", roleList);
-        model.addAttribute("statusList", statusList);
+        model.addAttribute("roleList", UserRole.getAllTitle());
+        model.addAttribute("statusList", UserStatus.getAllTitle());
         //model.addAttribute("currentUser", MainController.getCurrentUser(userService));
     }
 
@@ -77,8 +75,19 @@ public class UserAccountController {
         ModelAndView modelAndView = new ModelAndView();
         modelAndView.setViewName("userDetail");
         modelAndView.addObject("userAccount", userAccount);
+        modelAndView.addObject("changedUser", "");
         //modelAndView.addObject("currentUser", MainController.currentUser);
         LOGGER.info("userDetail was called");
+        return modelAndView;
+    }
+
+    @PostMapping(value = "/{id}")
+    public ModelAndView changeStatus(@PathVariable("id") int id,
+                                     @RequestParam("changedUser") String newStatus) {
+        LOGGER.info("/changeStatus - POST was called - new status: " + newStatus);
+        ModelAndView modelAndView = new ModelAndView();
+        userService.changeUserStatus(id, newStatus);
+        modelAndView.setViewName("redirect:/user/" + id);
         return modelAndView;
     }
 
@@ -124,41 +133,33 @@ public class UserAccountController {
     public ModelAndView editPage(@PathVariable("id") int id) {
         UserAccount user = userService.getByUserId(id);
         ModelAndView modelAndView = new ModelAndView();
-        modelAndView.setViewName("edit");
+        modelAndView.setViewName("editUser");
         modelAndView.addObject("user", user);
+        modelAndView.addObject("roleList", UserRole.getAllTitle());
         //modelAndView.addObject("currentUser", MainController.currentUser);
         LOGGER.info("/edit - GET was called");
         return modelAndView;
     }
 
     @PostMapping(value = "/{id}/edit")
-    public ModelAndView editUser(@Valid @ModelAttribute("user") UserAccountDto userDto, Errors errors) {
+    public ModelAndView editUser(@PathVariable("id") int id,
+                                 @Valid @ModelAttribute("user") UserAccountDto userDto, Errors errors) {
         LOGGER.info("/edit - POST was called");
         ModelAndView modelAndView = new ModelAndView();
         if (errors.hasErrors()) {
-            modelAndView.setViewName("edit");
+            modelAndView.setViewName("editUser");
         }
         UserAccount userAccount = new UserAccount(
-                0,
+                id,
                 userDto.getUsername(),
-                null,
+                userDto.getPassword(),
                 userDto.getFirstName(),
                 userDto.getLastName(),
                 userDto.getRole(),
-                null);
+                userDto.getStatus());
         userService.updateUser(userAccount);
         modelAndView.setViewName("redirect:/user/" + userAccount.getId());
         return modelAndView;
     }
 
-    @PostMapping(value = "/{id}")
-    public ModelAndView changeStatus(@PathVariable("id") int id,
-                                     @ModelAttribute("newStatus") String newStatus) {
-        LOGGER.info("/changeStatus - POST was called");
-        ModelAndView modelAndView = new ModelAndView();
-        String changeResult = userService.changeUserStatus(id, newStatus);
-        modelAndView.addObject("changeResult", changeResult);
-        modelAndView.setViewName("redirect:/user/" + id);
-        return modelAndView;
-    }
 }

@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8" />
+    <title>Edit User</title>
+    <link rel="stylesheet" type="text/css" th:href="@{/css/style.css}"/>
+    <link rel="stylesheet" type="text/css" th:href="@{/css/menu-style.css}"/>
+</head>
+<body>
+<div th:insert="~{fragments/main-fragment::menu}"></div>
+<div class="content">
+    <div id="editUser">
+        <h2>Edit information</h2>
+        <form th:action="@{'/user/' + ${user.id} + '/edit/'}" th:object="${user}" method="POST" name="UserForm" autocomplete="off">
+            <p>Username:<input type="text" th:field="*{username}" class="usernameField"/> </p>
+            <span class="validationError"
+                  th:if="${#fields.hasErrors('username')}"
+                  th:errors="*{username}"> </span>
+
+            <p>First Name:<input type="text" th:field="*{firstName}" class="firstNameField"/></p>
+            <span class="validationError"
+                  th:if="${#fields.hasErrors('firstName')}"
+                  th:errors="*{firstName}"> </span>
+
+            <p>Last Name:<input type="text" th:field="*{lastName}" class="lastNameField"/></p>
+            <span class="validationError"
+                  th:if="${#fields.hasErrors('lastName')}"
+                  th:errors="*{lastName}"> </span>
+
+            <p>Role:
+                <select th:field="*{role}" class="roleField">
+                    <option text="" value="" label="---"></option>
+                    <option th:each ="role : ${roleList}" th:value="${role}" th:text="${role}"></option>
+                </select>
+            </p>
+
+            <div class="formButton">
+                <input type="submit" value="SAVE" class="button"/>
+            </div>
+        </form>
+    </div>
+</div>
+<div th:insert="~{fragments/main-fragment::footer}"></div>
+</body>
+</html>

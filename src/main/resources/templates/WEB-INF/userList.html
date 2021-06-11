@@ -2,6 +2,7 @@
 <html xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8" />
+    <script src='http://code.jquery.com/jquery-latest.js'></script>
     <link rel="stylesheet" type="text/css" th:href="@{/css/style.css}"/>
     <link rel="stylesheet" type="text/css" th:href="@{/css/menu-style.css}"/>
     <link rel="stylesheet" type="text/css" th:href="@{/css/list-style.css}"/>
@@ -9,29 +10,33 @@
 </head>
 <body>
     <div th:insert="~{fragments/main-fragment::menu}"></div>
+    <div class="content">
     <div class="userList">
         <div id="filter">
             <form th:action="@{/user}" method="POST" th:object="${filterFieldUser}" name="userList" autocomplete="off">
                 <p>Username:
-                    <input type="text" th:field="*{username}"/>
+                    <input type="text" th:field="*{username}" class="usernameInput"/>
                 </p>
                 <p>Role:
-                    <select th:field="*{role}">
-                        <option text="" value="" label="не выбрано"></option>
+                    <select th:field="*{role}" class="selectRole">
+                        <option text="" value="" label="---"></option>
                         <option th:each ="role : ${roleList}" th:value="${role}" th:text="${role}"></option>
                     </select>
                 </p>
                 <p>Status:
-                    <select th:field="*{status}">
-                        <option text="" value="" label="no select"></option>
+                    <select th:field="*{status}" class="selectStatus">
+                        <option text="" value="" label="---"></option>
                         <option th:each ="status : ${statusList}" th:value="${status}" th:text="${status}"></option>
                     </select>
                 </p>
-                <input type="submit" value="FILTER" class="button buttonAdd buttFilter"/>
-                <input type="submit" value="CLEAN" class="button buttCl" />
+                <input type="submit" value="FILTER" class="button"/>
+                <input type="submit" value="CLEAN" class="button buttonClean" id="buttonCleanFilter"/>
             </form>
         </div>
-        <table border="1">
+        <div th:if="${#lists.isEmpty(userList)}">
+            <h2> Users not found. </h2>
+        </div>
+        <table border="1" th:unless="${#lists.isEmpty(userList)}">
             <thead>
                 <tr>
                     <th>Full Name</th>
@@ -48,7 +53,7 @@
                     <td th:utext="${user.username}">...</td>
                     <td th:utext="${user.role}">...</td>
                     <td th:utext="${user.status}">...</td>
-                    <td th:utext="${user.createdAt}">...</td>
+                    <td th:text="${#temporals.format(user.createdAt, 'dd-MM-yyyy HH:mm')}">...</td>
                     <td>
                         <a th:href="@{'/user/'+${user.id}}">detail</a>
                     </td>
@@ -56,6 +61,14 @@
             </tbody>
         </table>
     </div>
+    </div>
     <div th:insert="~{fragments/main-fragment::footer}"></div>
+    <script>
+        $('#buttonCleanFilter').on('click', function(){
+            $('.usernameInput').val("");
+            $('.selectRole').val("---");
+            $('.selectStatus').val("---");
+        });
+    </script>
 </body>
 </html>
