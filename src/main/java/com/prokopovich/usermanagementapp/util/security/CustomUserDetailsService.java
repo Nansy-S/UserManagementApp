@@ -24,11 +24,7 @@ public class CustomUserDetailsService implements UserDetailsService {
     public CustomUserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
         UserAccount userAccount = userAccountDao.findByUsername(username);
         if (userAccount != null) {
-            CustomUserDetails o = CustomUserDetails.fromUserEntityToCustomUserDetails(userAccount);
-            System.out.println("---------------------------------------------------------");
-            System.out.println(o);
-            System.out.println("---------------------------------------------------------");
-            return o;
+            return CustomUserDetails.fromUserEntityToCustomUserDetails(userAccount);
         } else {
             throw new UsernameNotFoundException("User not found with username: " + username);
         }
