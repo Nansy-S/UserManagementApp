@@ -2,7 +2,6 @@ package com.prokopovich.usermanagementapp.dto;
 
 import com.prokopovich.usermanagementapp.validator.UniqueUsername;
 
-import javax.validation.Valid;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.Pattern;
 import javax.validation.constraints.Size;
@@ -10,17 +9,15 @@ import javax.validation.constraints.Size;
 public class UserAccountDto {
 
     @NotBlank(message="The field is not filled.")
-    @UniqueUsername
     @Size(min=3, max=16, message="Username must be at least 3 and no more than 16 characters.")
     @Pattern(regexp="^[a-zA-Z]+$", message="Username must contain only Latin letters")
+    @UniqueUsername
     private String username;
 
     @NotBlank(message="The field is not filled.")
-
     @Size(min=3, max=16, message="Password must be at least 3 and no more than 16 characters.")
-    @Pattern(regexp="^[a-zA-Z0-9]+$", message="Password must contain only Latin letters or numbers")
-    @Pattern(regexp="[a-zA-Z]", message="Password must contain at least one character")
-    @Pattern(regexp="[0-9]", message="Password must contain at least one numbers")
+    @Pattern(regexp="^[a-zA-Z]+[0-9]+$", message="Password must contain only Latin letters or numbers, " +
+                                                    "contain at least one character and at least one number")
     private String password;
 
     @NotBlank(message="The field is not filled.")
@@ -33,8 +30,10 @@ public class UserAccountDto {
     @Pattern(regexp="^[a-zA-Z]+$", message="Last Name must contain only Latin letters")
     private String lastName;
 
+    @NotBlank(message="The field is not filled.")
     private String role;
 
+    @NotBlank(message="The field is not filled.")
     private String status;
 
     public UserAccountDto() { }

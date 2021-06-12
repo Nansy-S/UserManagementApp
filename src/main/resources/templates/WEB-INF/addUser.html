@@ -8,7 +8,7 @@
     <link rel="stylesheet" type="text/css" th:href="@{/css/menu-style.css}"/>
 </head>
 <body>
-    <div th:insert="~{fragments/main-fragment::menu}"></div>
+    <div th:insert="~{fragments/main-fragment::menu(userRole = ${currentUser.role})}"></div>
     <div class="content">
     <div id="addUser">
         <h2>Enter information</h2>
@@ -39,6 +39,9 @@
                     <option th:each ="role : ${roleList}" th:value="${role}" th:text="${role}"></option>
                 </select>
             </p>
+            <span class="validationError"
+                  th:if="${#fields.hasErrors('role')}"
+                  th:errors="*{role}"> </span>
 
             <p>Status:
                 <select th:field="*{status}" class="statusField">
@@ -46,6 +49,10 @@
                     <option th:each ="status : ${statusList}" th:value="${status}" th:text="${status}"></option>
                 </select>
             </p>
+            <span class="validationError"
+                  th:if="${#fields.hasErrors('status')}"
+                  th:errors="*{status}"> </span>
+
             <div class="formButton">
                 <input type="submit" value="ADD" class="button"/>
                 <input type="button" value="CLEAN" class="button buttonClean" />

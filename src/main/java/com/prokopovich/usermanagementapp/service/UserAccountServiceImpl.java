@@ -66,8 +66,8 @@ public class UserAccountServiceImpl implements UserAccountService {
     }
 
     @Override
-    public List<UserAccount> findByUsername(String username) {
-        return (List<UserAccount>) userDao.findAllByUsername(username);
+    public UserAccount findByUsername(String username) {
+        return userDao.findByUsername(username);
     }
 
     @Override

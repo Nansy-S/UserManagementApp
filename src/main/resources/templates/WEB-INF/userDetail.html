@@ -6,7 +6,7 @@
     <link rel="stylesheet" type="text/css" th:href="@{/css/style.css}"/>
 </head>
 <body>
-    <div th:insert="~{fragments/main-fragment::menu}"></div>
+    <div th:insert="~{fragments/main-fragment::menu(userRole = ${currentUser.role})}"></div>
     <div class="content">
         <div id="infoUser">
             <h2>User details</h2>
@@ -16,18 +16,20 @@
             <p th:utext="'Status: <b>' + ${userAccount.status} + '</b>'">...</p>
             <p th:utext="'Created at: <b>' + ${#temporals.format(userAccount.createdAt, 'dd-MM-yyyy HH:mm')} + '</b>'">...</p>
         </div>
-        <div class="buttonUser">
+        <div class="buttonUser" th:if="${currentUser.role == 'ADMIN'}">
             <a th:href="@{'/user/' + ${userAccount.id} + '/edit/'}" class="button editBtn">EDIT USER</a><br>
-            <form th:if="${userAccount.status == 'ACTIVE'}"
-                  th:action="@{'/user/' + ${userAccount.id}}" method="POST">
-                <input type="text" hidden name="changedUser" th:value="INACTIVE" class="usernameInput"/>
-                <input type="submit" value="BLOCK USER" class="button blockBtn"/>
-            </form>
-            <form th:if="${userAccount.status == 'INACTIVE'}"
-                  th:action="@{'/user/' + ${userAccount.id}}" method="POST">
-                <input type="text" hidden th:field="*{changedUser}" th:value="ACTIVE" class="usernameInput"/>
-                <input type="submit" value="UNBLOCK USER" class="button blockBtn"/>
-            </form>
+            <div id="blockUser" th:unless="${userAccount.id == currentUser.id}">
+                <form th:if="${userAccount.status == 'ACTIVE'}"
+                      th:action="@{'/user/' + ${userAccount.id}}" method="POST">
+                    <input type="text" hidden name="changedUser" th:value="INACTIVE" class="usernameInput"/>
+                    <input type="submit" value="BLOCK USER" class="button blockBtn"/>
+                </form>
+                <form th:if="${userAccount.status == 'INACTIVE'}"
+                      th:action="@{'/user/' + ${userAccount.id}}" method="POST">
+                    <input type="text" hidden th:field="*{changedUser}" th:value="ACTIVE" class="usernameInput"/>
+                    <input type="submit" value="UNBLOCK USER" class="button blockBtn"/>
+                </form>
+            </div>
         </div>
     </div>
     <div th:insert="~{fragments/main-fragment::footer}"></div>

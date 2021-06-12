@@ -7,8 +7,14 @@
     <link rel="stylesheet" type="text/css" th:href="@{/css/menu-style.css}"/>
 </head>
 <body>
-    <div th:insert="~{fragments/main-fragment::menu}"></div>
-    <h1> Welcome<span></span>!</h1>
+    <div th:insert="~{fragments/main-fragment::menu(userRole = ${currentUser?.role})}"></div>
+    <div class="content">
+        <div class="helloTitle">
+            <h1> Welcome<span th:if="${currentUser}"
+                        th:utext="', ' + ${currentUser?.firstName} + ' ' + ${currentUser?.lastName}"></span>!</h1>
+            <p th:unless="${currentUser} == null"> You entered as <span th:utext="${currentUser?.role}"></span></p>
+        </div>
+    </div>
     <div th:insert="~{fragments/main-fragment::footer}"></div>
 </body>
 </html>

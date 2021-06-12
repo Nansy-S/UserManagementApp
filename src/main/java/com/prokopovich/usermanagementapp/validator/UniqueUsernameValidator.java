@@ -21,7 +21,7 @@ public class UniqueUsernameValidator implements ConstraintValidator<UniqueUserna
         if(username == null) {
             return false;
         }
-        if(userDao.findAllByUsername(username).isEmpty()) {
+        if(userDao.findByUsername(username) == null) {
             return true;
         } else {
             return false;

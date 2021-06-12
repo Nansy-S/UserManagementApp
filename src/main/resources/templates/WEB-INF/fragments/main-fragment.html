@@ -1,13 +1,17 @@
 
-<div xmlns:th="http://www.thymeleaf.org" th:fragment="menu" id="common_menu">
+<div xmlns:th="http://www.thymeleaf.org" th:fragment="menu(userRole)" id="common_menu">
     <div class="menu">
         <ul>
             <li><a th:href="@{/}" class="common_menu">Home</a></li>
-            <li><a th:href="@{/user}" class="common_menu">LIST</a></li>
-            <li><a th:href="@{/user/new}" class="common_menu">NEW USER</a></li>
+            <li><a th:href="@{/user}" th:if="${userRole == 'ADMIN' || userRole == 'USER'}" class="common_menu">LIST</a></li>
+            <li><a th:href="@{/user/new}" th:if="${userRole == 'ADMIN'}" class="common_menu">NEW USER</a></li>
             <li>
-                <a th:href="@{/logout}" class="common_menu">Log In</a>
-                <a th:href="@{/logout}" class="common_menu">Log Out</a>
+                <div id="loginBtn">
+                    <form th:action="@{/logout}" method="post">
+                        <input type="submit" th:unless="${userRole}" value="Log In" class="common_menu"/>
+                        <input type="submit" th:if="${userRole}" value="Log Out" class="common_menu"/>
+                    </form>
+                </div>
             </li>
         </ul>
     </div>

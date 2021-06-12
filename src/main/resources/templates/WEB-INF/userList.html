@@ -9,7 +9,7 @@
     <title>List User</title>
 </head>
 <body>
-    <div th:insert="~{fragments/main-fragment::menu}"></div>
+    <div th:insert="~{fragments/main-fragment::menu(userRole = ${currentUser.role})}"></div>
     <div class="content">
     <div class="userList">
         <div id="filter">

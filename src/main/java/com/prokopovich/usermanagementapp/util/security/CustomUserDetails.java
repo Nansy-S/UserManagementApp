@@ -1,6 +1,7 @@
 package com.prokopovich.usermanagementapp.util.security;
 
 import com.prokopovich.usermanagementapp.entity.UserAccount;
+import com.prokopovich.usermanagementapp.enumeration.UserStatus;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -12,13 +13,23 @@ public class CustomUserDetails implements UserDetails {
 
     private String username;
     private String password;
+    private String status;
     private Collection<? extends GrantedAuthority> grantedAuthorities;
 
     public static CustomUserDetails fromUserEntityToCustomUserDetails(UserAccount userAccount) {
         CustomUserDetails userDetails = new CustomUserDetails();
         userDetails.username = userAccount.getUsername();
         userDetails.password = userAccount.getPassword();
+        userDetails.status = userAccount.getStatus();
         userDetails.grantedAuthorities = Arrays.asList(new SimpleGrantedAuthority("ROLE_" + userAccount.getRole()));
+
+        System.out.println("---------------------------------------------------------");
+        System.out.println(userDetails.username);
+        System.out.println(userDetails.password);
+        System.out.println(userDetails.status);
+        System.out.println(userDetails.grantedAuthorities);
+        System.out.println("---------------------------------------------------------");
+
         return userDetails;
     }
 
@@ -44,7 +55,9 @@ public class CustomUserDetails implements UserDetails {
 
     @Override
     public boolean isAccountNonLocked() {
-        return true;
+        if(this.status == null) return true;
+        if(!this.status.equals(UserStatus.INACTIVE.getTitle())) return true;
+        return false;
     }
 
     @Override

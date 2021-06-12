@@ -84,7 +84,7 @@ public class UserAccountDaoImpl implements UserAccountDao {
     }
 
     @Override
-    public Collection<UserAccount> findAllByUsername(String username) throws DaoException {
+    public UserAccount findByUsername(String username) throws DaoException {
         LOGGER.trace("findAllByUsername method is executed");
         EntityManager entityManager = entityManagerFactory.createEntityManager();
         try {
@@ -93,7 +93,10 @@ public class UserAccountDaoImpl implements UserAccountDao {
             Root<UserAccount> tRoot = criteriaQuery.from(UserAccount.class);
             Predicate predicate = criteriaBuilder.equal(tRoot.get("username"), username);
             criteriaQuery.where(predicate);
-            return entityManager.createQuery(criteriaQuery).getResultList();
+            if(entityManager.createQuery(criteriaQuery).getResultList().isEmpty()) {
+                return null;
+            }
+            return entityManager.createQuery(criteriaQuery).getResultList().iterator().next();
         } finally {
             entityManager.close();
         }

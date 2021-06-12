@@ -1,16 +1,16 @@
 package com.prokopovich.usermanagementapp.controller;
 
-import com.prokopovich.usermanagementapp.dao.UserAccountDao;
 import com.prokopovich.usermanagementapp.dto.UserAccountDto;
 import com.prokopovich.usermanagementapp.entity.UserAccount;
 import com.prokopovich.usermanagementapp.enumeration.UserRole;
 import com.prokopovich.usermanagementapp.enumeration.UserStatus;
 import com.prokopovich.usermanagementapp.service.UserAccountService;
+import com.prokopovich.usermanagementapp.util.security.CustomUserDetailsService;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.Sort;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.access.annotation.Secured;
+import org.springframework.security.config.annotation.method.configuration.EnableGlobalMethodSecurity;
 import org.springframework.ui.Model;
 import org.springframework.validation.Errors;
 import org.springframework.web.bind.annotation.*;
@@ -21,18 +21,22 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/user")
+@EnableGlobalMethodSecurity(securedEnabled = true)
 public class UserAccountController {
 
     private static final Logger LOGGER = LogManager.getLogger(UserAccountController.class);
 
     private final UserAccountService userService;
+    private final CustomUserDetailsService userDetailsService;
 
     @Autowired
-    public UserAccountController(UserAccountService userService) {
+    public UserAccountController(UserAccountService userService, CustomUserDetailsService userDetailsService) {
         this.userService = userService;
+        this.userDetailsService = userDetailsService;
     }
 
     @GetMapping(value = {""})
+    @Secured({"ROLE_ADMIN", "ROLE_USER"})
     public ModelAndView userList(Model model) {
         UserAccountDto filterFieldUser = new UserAccountDto();
 
@@ -40,14 +44,15 @@ public class UserAccountController {
         LOGGER.info("user List" + userList);
         ModelAndView modelAndView = new ModelAndView();
         modelAndView.setViewName("userList");
-        model.addAttribute("filterFieldUser", filterFieldUser);
         model.addAttribute("userList", userList);
-        setModelForListUser(model);
+        model.addAttribute("filterFieldUser", filterFieldUser);
+        addEnumAndCurrentUserInModel(model);
         LOGGER.info("/user was called");
         return modelAndView;
     }
 
     @PostMapping(value = {""})
+    @Secured({"ROLE_ADMIN", "ROLE_USER"})
     public ModelAndView filterUserList(Model model,
                                        @ModelAttribute("filterFieldUser") UserAccountDto filterFieldUser) {
         List<UserAccount> userList = userService.filterUser(
@@ -58,30 +63,26 @@ public class UserAccountController {
         modelAndView.setViewName("userList");
         model.addAttribute("userList", userList);
         model.addAttribute("filterFieldUser", filterFieldUser);
-        setModelForListUser(model);
+        addEnumAndCurrentUserInModel(model);
         LOGGER.info("/user was called");
         return modelAndView;
     }
 
-    private void setModelForListUser(Model model) {
-        model.addAttribute("roleList", UserRole.getAllTitle());
-        model.addAttribute("statusList", UserStatus.getAllTitle());
-        //model.addAttribute("currentUser", MainController.getCurrentUser(userService));
-    }
-
     @GetMapping(value = {"/{id}"})
+    @Secured({"ROLE_ADMIN", "ROLE_USER"})
     public ModelAndView userDetail(@PathVariable("id") int id) {
         UserAccount userAccount = userService.getByUserId(id);
         ModelAndView modelAndView = new ModelAndView();
         modelAndView.setViewName("userDetail");
         modelAndView.addObject("userAccount", userAccount);
         modelAndView.addObject("changedUser", "");
-        //modelAndView.addObject("currentUser", MainController.currentUser);
+        modelAndView.addObject("currentUser", userDetailsService.getCurrentUser());
         LOGGER.info("userDetail was called");
         return modelAndView;
     }
 
     @PostMapping(value = "/{id}")
+    @Secured("ROLE_ADMIN")
     public ModelAndView changeStatus(@PathVariable("id") int id,
                                      @RequestParam("changedUser") String newStatus) {
         LOGGER.info("/changeStatus - POST was called - new status: " + newStatus);
@@ -92,56 +93,58 @@ public class UserAccountController {
     }
 
     @GetMapping(value = "/new")
-    public  ModelAndView addUserPage(Model model) {
+    @Secured("ROLE_ADMIN")
+    public ModelAndView addUserPage(Model model) {
         ModelAndView modelAndView = new ModelAndView("addUser");
         UserAccountDto userForm = new UserAccountDto();
         model.addAttribute("userForm", userForm);
-        model.addAttribute("roleList", UserRole.getAllTitle());
-        model.addAttribute("statusList", UserStatus.getAllTitle());
+        addEnumAndCurrentUserInModel(model);
         LOGGER.info("addUser - GET was called");
         return modelAndView;
     }
 
     @PostMapping(value = "/new")
+    @Secured("ROLE_ADMIN")
     public ModelAndView saveUser(Model model,
                                  @Valid @ModelAttribute("userForm") UserAccountDto userDto, Errors errors) {
         LOGGER.info("addUser - POST was called");
         ModelAndView modelAndView = new ModelAndView();
         if (errors.hasErrors()) {
             modelAndView.setViewName("addUser");
-           // model.addAttribute("currentUser", MainController.currentUser);
+            addEnumAndCurrentUserInModel(model);
         }
         else {
             modelAndView.setViewName("userList");
             UserAccount newUser = new UserAccount(
                     0,
                     userDto.getUsername(),
-                    new BCryptPasswordEncoder().encode(userDto.getPassword()),
+                    userDto.getPassword(),
                     userDto.getFirstName(),
                     userDto.getLastName(),
                     userDto.getRole(),
                     userDto.getStatus());
-            userService.addNewUser(newUser);
-            model.addAttribute("userList",  userService.getAllUser());
-            //model.addAttribute("currentUser", MainController.currentUser);
+            newUser = userService.addNewUser(newUser);
+            modelAndView.setViewName("redirect:/user/" + newUser.getId());
             return modelAndView;
         }
         return modelAndView;
     }
 
     @GetMapping(value = "/{id}/edit")
+    @Secured("ROLE_ADMIN")
     public ModelAndView editPage(@PathVariable("id") int id) {
         UserAccount user = userService.getByUserId(id);
         ModelAndView modelAndView = new ModelAndView();
         modelAndView.setViewName("editUser");
         modelAndView.addObject("user", user);
         modelAndView.addObject("roleList", UserRole.getAllTitle());
-        //modelAndView.addObject("currentUser", MainController.currentUser);
+        modelAndView.addObject("currentUser", userDetailsService.getCurrentUser());
         LOGGER.info("/edit - GET was called");
         return modelAndView;
     }
 
     @PostMapping(value = "/{id}/edit")
+    @Secured("ROLE_ADMIN")
     public ModelAndView editUser(@PathVariable("id") int id,
                                  @Valid @ModelAttribute("user") UserAccountDto userDto, Errors errors) {
         LOGGER.info("/edit - POST was called");
@@ -162,4 +165,9 @@ public class UserAccountController {
         return modelAndView;
     }
 
+    private void addEnumAndCurrentUserInModel(Model model) {
+        model.addAttribute("roleList", UserRole.getAllTitle());
+        model.addAttribute("statusList", UserStatus.getAllTitle());
+        model.addAttribute("currentUser", userDetailsService.getCurrentUser());
+    }
 }

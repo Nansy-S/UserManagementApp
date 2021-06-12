@@ -7,7 +7,7 @@
     <link rel="stylesheet" type="text/css" th:href="@{/css/menu-style.css}"/>
 </head>
 <body>
-<div th:insert="~{fragments/main-fragment::menu}"></div>
+<div th:insert="~{fragments/main-fragment::menu(userRole = ${currentUser.role})}"></div>
 <div class="content">
     <div id="editUser">
         <h2>Edit information</h2>

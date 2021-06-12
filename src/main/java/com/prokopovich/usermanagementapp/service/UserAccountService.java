@@ -16,7 +16,7 @@ public interface UserAccountService {
 
     void changeUserStatus(int id, String status);
 
-    List<UserAccount> findByUsername(String username);
+    UserAccount findByUsername(String username);
 
     List<UserAccount> filterUser(String username, String role, String status);
 }

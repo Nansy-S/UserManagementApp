@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8" />
+    <title>Home</title>
+    <link rel="stylesheet" type="text/css" th:href="@{/css/style.css}"/>
+    <link rel="stylesheet" type="text/css" th:href="@{/css/menu-style.css}"/>
+</head>
+<body>
+    <div th:insert="~{fragments/main-fragment::menu(userRole = '')}"></div>
+    <div class="content">
+        <div id="divLogin">
+            <form th:action="@{/login}" method="post" name="login" autocomplete="off">
+                <p>Username:<input type="text" name="username" id="username" required/> </p>
+                <p>Password:<input type="password" name="password" id="password" required/> </p>
+                <div th:if="${param.error}">
+                    <p class="validationError">[[${session.SPRING_SECURITY_LAST_EXCEPTION.message}]]</p>
+                </div>
+                <input type="submit" value="LogIn" class="button" id="buttonAuthorization" />
+            </form>
+        </div>
+    </div>
+    <div th:insert="~{fragments/main-fragment::footer}"></div>
+</body>
+</html>
