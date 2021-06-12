@@ -1,6 +1,5 @@
 package com.prokopovich.usermanagementapp.controller;
 
-import com.prokopovich.usermanagementapp.service.UserAccountService;
 import com.prokopovich.usermanagementapp.util.security.CustomUserDetailsService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.ui.Model;

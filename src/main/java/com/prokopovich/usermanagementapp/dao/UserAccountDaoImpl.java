@@ -32,7 +32,7 @@ public class UserAccountDaoImpl implements UserAccountDao {
 
     @Override
     public UserAccount create(UserAccount newUser) throws DaoException {
-        LOGGER.trace("create userAccount method is executed");
+        LOGGER.trace("create userAccount method is executed - new user: " + newUser);
         EntityManager entityManager = entityManagerFactory.createEntityManager();
         try {
             entityManager.getTransaction().begin();
@@ -62,6 +62,7 @@ public class UserAccountDaoImpl implements UserAccountDao {
 
     @Override
     public UserAccount findOne(int id) throws DaoException {
+        LOGGER.trace("findOne method is executed - id: " + id);
         EntityManager entityManager = entityManagerFactory.createEntityManager();
         try {
             return entityManager.find(UserAccount.class, id);
