@@ -19,15 +19,18 @@
         <div class="buttonUser" th:if="${currentUser.role == 'ADMIN'}">
             <a th:href="@{'/user/' + ${userAccount.id} + '/edit/'}" class="button editBtn">EDIT USER</a><br>
             <div id="blockUser" th:unless="${userAccount.id == currentUser.id}">
-                <form th:if="${userAccount.status == 'ACTIVE'}"
-                      th:action="@{'/user/' + ${userAccount.id}}" method="POST">
-                    <input type="text" hidden name="changedUser" th:value="INACTIVE" class="usernameInput"/>
-                    <input type="submit" value="BLOCK USER" class="button blockBtn"/>
-                </form>
-                <form th:if="${userAccount.status == 'INACTIVE'}"
-                      th:action="@{'/user/' + ${userAccount.id}}" method="POST">
-                    <input type="text" hidden th:field="*{changedUser}" th:value="ACTIVE" class="usernameInput"/>
-                    <input type="submit" value="UNBLOCK USER" class="button blockBtn"/>
+
+                <form th:action="@{'/user/' + ${userAccount.id}}" method="POST">
+                    <div th:if="${userAccount.status == 'ACTIVE'}">
+                        <input type="text" hidden name="newStatus"
+                               th:value="INACTIVE" class="usernameInput"/>
+                        <input type="submit" value="BLOCK USER" class="button blockBtn"/>
+                    </div>
+                    <div th:if="${userAccount.status == 'INACTIVE'}">
+                        <input type="text" hidden name="newStatus"
+                               th:value="ACTIVE" class="usernameInput"/>
+                        <input type="submit" value="UNBLOCK USER" class="button blockBtn"/>
+                    </div>
                 </form>
             </div>
         </div>

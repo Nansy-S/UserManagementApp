@@ -75,7 +75,6 @@ public class UserAccountController {
         ModelAndView modelAndView = new ModelAndView();
         modelAndView.setViewName("userDetail");
         modelAndView.addObject("userAccount", userAccount);
-        modelAndView.addObject("changedUser", "");
         modelAndView.addObject("currentUser", userDetailsService.getCurrentUser());
         LOGGER.info("userDetail was called");
         return modelAndView;
@@ -84,7 +83,7 @@ public class UserAccountController {
     @PostMapping(value = "/{id}")
     @Secured("ROLE_ADMIN")
     public ModelAndView changeStatus(@PathVariable("id") int id,
-                                     @RequestParam("changedUser") String newStatus) {
+                                     @RequestParam("newStatus") String newStatus) {
         LOGGER.info("/changeStatus - POST was called - new status: " + newStatus);
         ModelAndView modelAndView = new ModelAndView();
         userService.changeUserStatus(id, newStatus);
@@ -114,7 +113,6 @@ public class UserAccountController {
             addEnumAndCurrentUserInModel(model);
         }
         else {
-            modelAndView.setViewName("userList");
             UserAccount newUser = new UserAccount(
                     0,
                     userDto.getUsername(),
@@ -132,11 +130,12 @@ public class UserAccountController {
 
     @GetMapping(value = "/{id}/edit")
     @Secured("ROLE_ADMIN")
-    public ModelAndView editPage(@PathVariable("id") int id) {
+    public ModelAndView editPage(Model model,
+                                 @PathVariable("id") int id) {
         UserAccount user = userService.getByUserId(id);
         ModelAndView modelAndView = new ModelAndView();
         modelAndView.setViewName("editUser");
-        modelAndView.addObject("user", user);
+        model.addAttribute("user", user);
         modelAndView.addObject("roleList", UserRole.getAllTitle());
         modelAndView.addObject("currentUser", userDetailsService.getCurrentUser());
         LOGGER.info("/edit - GET was called");
@@ -145,12 +144,14 @@ public class UserAccountController {
 
     @PostMapping(value = "/{id}/edit")
     @Secured("ROLE_ADMIN")
-    public ModelAndView editUser(@PathVariable("id") int id,
-                                 @Valid @ModelAttribute("user") UserAccountDto userDto, Errors errors) {
+    public ModelAndView editUser(@Valid @ModelAttribute("user") UserAccountDto userDto, Errors editErrors,
+                                 Model model,
+                                 @PathVariable("id") int id) {
         LOGGER.info("/edit - POST was called");
         ModelAndView modelAndView = new ModelAndView();
-        if (errors.hasErrors()) {
+        if (editErrors.hasErrors()) {
             modelAndView.setViewName("editUser");
+            model.addAttribute("roleList", UserRole.getAllTitle());
         }
         UserAccount userAccount = new UserAccount(
                 id,
